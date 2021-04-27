@@ -1,0 +1,24 @@
+drop table memo;
+
+drop sequence memo_seq; 
+
+create table memo (
+	mno number(7),
+	sender varchar2(10 char),
+	receiver varchar2(10 char),
+	title varchar2(50 char),
+	content varchar2(300 char),
+	writetime date,
+	isRead number(1),
+	disabledBySender number(1),
+	disabledByReceiver number(1),
+	constraint memo_pk_mno primary key(mno)
+);
+
+create sequence memo_seq minvalue 0;
+
+select memo_seq.nextval from dual;
+
+
+commit;
+

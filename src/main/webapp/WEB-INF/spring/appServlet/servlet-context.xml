@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.3.xsd
+		http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<annotation-driven />
+
+	<default-servlet-handler/>
+
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- root-context에서 제외한 컨트롤러 클래스에 대한 컴포넌트 스캔 -->
+	<context:component-scan base-package="com.icia.zboard3.controller" />
+
+	<security:global-method-security pre-post-annotations="enabled" secured-annotations="enabled" />
+
+	<!-- 로그인하지 않은 상태에서만 접근 가능한 경로에 로그인 사용자가 접근할 경우 오류처리하는 인터셉터와 경로 등록 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/user/join"/>
+			<mapping path="/user/login"/>
+			<mapping path="/user/find"/>
+			<mapping path="/user/join_check"/>
+			<mapping path="/user/reset_pwd" />
+			<mapping path="/users/user/username" />
+			<mapping path="/users/user/email" />
+			<mapping path="/users/new" />
+			<mapping path="/users/username/email" />
+			<beans:ref bean="anonymousInterceptor"/>
+		</interceptor>
+	</interceptors>	
+	
+	<!--  웹 소켓 설정 : junit 테스트할 때는 주석처리 필수 -->
+	<websocket:handlers>
+		<websocket:mapping path="/web/socket" handler="messageWebSocketHandler" />
+	</websocket:handlers>
+</beans:beans>

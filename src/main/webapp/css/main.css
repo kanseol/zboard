@@ -1,0 +1,27 @@
+@charset "UTF-8";
+
+/* reset */ 
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#page { 
+	width: 1005px;
+	margin: 0 auto;
+}
+
+aside { 
+	float: left;
+}
+
+section {
+	float: right;
+	width: 800px;
+	min-height: 600px;
+	border: 1px solid orange;
+}
+
+#main {
+	overflow: hidden;
+}

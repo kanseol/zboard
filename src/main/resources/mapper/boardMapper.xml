@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icia.zboard3.dao.BoardDao">
+	<insert id="insert">
+		<selectKey keyProperty="bno" order="BEFORE" resultType="int">
+			select board_seq.nextval from dual
+		</selectKey>
+		insert into board values(#{bno},#{title},#{content},#{writer},sysdate,0,#{attachmentCnt},0,0,0,0)
+	</insert>
+	
+	<delete id="delete">
+		delete from board where bno=#{bno} and rownum=1
+	</delete>
+	
+	<select id="findById" resultType="board">
+		select * from board where bno=#{bno} and rownum=1
+	</select>
+	
+	<update id="update">
+		update board 
+		<trim suffixOverrides="," prefix="set">
+			<if test="title!=null">title=#{title},</if>
+			<if test="content!=null">content=#{content},</if>
+			<if test="readCnt!=null">readCnt=#{readCnt},</if>
+			<if test="goodCnt!=null">goodCnt=#{goodCnt},</if>
+			<if test="badCnt!=null">badCnt=#{badCnt},</if>
+			<if test="commentCnt!=null">commentCnt=#{commentCnt},</if>
+			<if test="deleteCommentCnt!=null">deleteCommentCnt=#{deleteCommentCnt},</if>
+			<if test="attachmentCnt!=null">attachmentCnt=#{attachmentCnt},</if>
+		</trim>
+		where bno=#{bno} and rownum=1
+	</update>
+	
+	<select id="count" resultType="int">
+		select count(*) from board
+		<where>
+			<if test="writer!=null">writer=#{writer}</if>
+		</where>
+	</select>
+	
+	<select id="findAll" resultType="map">
+	<![CDATA[
+		select * from (
+			select rownum as rnum, b.* from (	
+				select /*+ index_desc(board board_pk_bno)*/ bno, title, writer, to_char(writetime, 'yyyy-MM-dd hh:mm:ss') as writeTimeString, readCnt, 
+				attachmentCnt, commentCnt from board ) b
+			where rownum<=#{endRowNum}
+		) where rnum>=#{startRowNum}
+	]]>	
+	</select>
+	
+	<select id="findAllByWriter" resultType="map">
+	<![CDATA[
+		select * from (
+			select rownum as rnum, b.* from (	
+				select /*+ index_desc(board board_pk_bno)*/ bno, title, writer, to_char(writetime, 'yyyy-MM-dd hh:mm:ss') as writeTime, readCnt, 
+				attachmentCnt, commentCnt from board where writer=#{writer}) b
+			where rownum<=#{map.endRowNum}
+		) where rnum>=#{map.startRowNum}
+	]]>	
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

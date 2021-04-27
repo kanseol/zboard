@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icia.zboard3.dao.MemoDao">
+	<insert id="insert">
+		insert into memo(mno, title, content, sender, receiver, writeTime, isRead, disabledBySender, disabledByReceiver) 
+		values(memo_seq.nextval, #{title}, #{content}, #{sender}, #{receiver}, sysdate, 0, 0, 0)
+	</insert>
+
+	<select id="findAllBySender" resultType="memo">
+		select /*+ index_desc(memo memo_pk_mno) */ * from memo where sender=#{username} and disabledBySender=0
+	</select>
+	
+	<select id="findAllByReceiver" resultType="memo">
+		select /*+ index_desc(memo memo_pk_mno) */ * from memo where receiver=#{username} and disabledByReceiver=0
+	</select>
+	
+	<select id="findById" resultType="memo">
+		select * from memo where mno=#{mno} and rownum=1
+	</select>
+	
+	<update id="setRead">
+		update memo set isRead=1 where mno=#{mno} and rownum=1
+	</update>
+	
+	<!-- update memo set disabledBySender=1 where mno in (11,20,30) -->
+	<update id="disabledBySender">
+		update memo set disabledBySender=1 where mno in
+		<foreach collection="list" item="mno" separator="," open="(" close=")">
+			#{mno}
+		</foreach>
+	</update>
+	
+	<update id="disabledByReceiver">
+		update memo set disabledByReceiver=1 where mno in
+		<foreach collection="list" item="mno" separator="," open="(" close=")">
+			#{mno}
+		</foreach>
+	</update>
+	
+	<delete id="delete">
+		delete from memo where disabledBySender=1 and disabledByReceiver=1 
+	</delete>
+	
+	<select id="existsByIsReadIsFalse" resultType="boolean" >
+		select count(*) from memo where receiver=#{receiver} and isRead=0 and rownum=1
+	</select>
+</mapper>

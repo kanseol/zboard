@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icia.zboard3.dao.CommentDao">
+	<insert id="insert">
+		insert into comments values(comment_seq.nextval, #{bno},#{writer},#{content},sysdate,#{profile})
+	</insert>
+	
+	<delete id="delete">
+		delete from comments where cno=#{cno} and rownum=1
+	</delete>
+	
+	<delete id="deleteByBno">
+		delete from comments where bno=#{bno}
+	</delete>
+	
+	<!-- 페이징 쿼리 작성할 때 컬럼 위치에 따라 잘못된 형식으로 변환하는 경우가 있더라 -->
+	<select id="findAll" resultType="comment">
+	<![CDATA[
+		select * from (
+			select rownum as rnum, c.* from 
+				(select  /*+ index_desc(comments comment_pk_cno) */ cno, bno, writer, writetime, profile, content from comments where bno=#{bno}) c  
+			where rownum<=#{rownum.endRowNum}
+		) 
+		where rnum>=#{rownum.startRowNum}
+	]]>
+	</select>
+	
+	<!-- top N 쿼리 -->
+	<select id="findFirstPage" resultType="comment">
+	<![CDATA[
+		select * from (
+			select /*+ index_desc(comments comment_pk_cno) */ cno, bno, writer, content, writetime, profile from comments where bno=#{bno}
+		) where rownum<=#{endRowNum}
+	]]>
+	</select>
+	
+	<select id="findById" resultType="comment">
+		select * from comments where cno=#{cno} and rownum=1
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

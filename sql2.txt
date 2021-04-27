@@ -1,0 +1,59 @@
+drop table category;
+drop table product;
+drop sequence product_seq;
+
+create table category (
+	cno number(3),
+	name varchar2(20 char),
+	parentCno number(3),
+	constraint category_pk_cno primary key(cno)
+);
+
+insert into category values(1, '신선식품', null);
+insert into category values(2, '가공식품', null);
+insert into category values(3, '잡화', null);
+
+insert into category values(11, '육류', 1);
+insert into category values(12, '과일', 1);
+insert into category values(13, '유제품', 1);
+
+insert into category values(21, '라면', 2);
+insert into category values(22, '즉석식품', 2);
+
+insert into category values(31, '주방용품', 3);
+insert into category values(32, '청소도구', 3);
+commit;
+
+create table product (
+	pno number(3),
+	name varchar(20 char),
+	cno number(3),
+	price number(6),
+	stock number(3),
+	info clob,
+	image varchar2(100),
+	regday date,
+	numberOfReview number(4),
+	sumOfStar number(5),
+	countOfStar number(4),
+	constraint category_pk_pno primary key(pno)
+);
+
+create sequence product_seq minvalue 0;
+select product_seq.nextval from dual;
+
+insert into product values(product_seq.nextval, '소고기', 11, 20000, 15, '신선한 소고기 정육', 'http://localhost:8081/product/beef.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '돼지고기', 11, 13000, 20, '신선한 돼지고기 정육', 'http://localhost:8081/product/pig.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '사과', 12, 15000, 13, '대구산 사과', 'http://localhost:8081/product/apple.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '바나나', 12, 4000, 12, '말레이지아 바나나', 'http://localhost:8081/product/banana.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '우유', 13, 3800, 30, '서울 우유', 'http://localhost:8081/product/milk.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '요쿠르트', 13, 6000, 25, '불가리스', 'http://localhost:8081/product/yokurt.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '신라면', 21, 4000, 50, '농심 신라면', 'http://localhost:8081/product/ramen.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '메밀면', 21, 3700, 22, '시원한 메밀소바 맛면', 'http://localhost:8081/product/soba.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '알밥', 22, 3500, 30, '오뚜기 알밥', 'http://localhost:8081/product/albap.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '스파게티', 22, 8000, 8, '까르보나라 스파게티', 'http://localhost:8081/product/pasta.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '수세미', 31, 6000, 10, '잘닦이는 수세미', 'http://localhost:8081/product/susemi.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '세제', 31, 5000, 5, '천연 성분 주방세제', 'http://localhost:8081/product/detergent.jpg', sysdate, 0, 0, 0);
+insert into product values(product_seq.nextval, '청소포', 32, 7000, 11, '멸균 청소포', 'http://localhost:8081/product/clean.jpg', sysdate, 0, 0, 0);
+
+commit;

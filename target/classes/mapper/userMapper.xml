@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icia.zboard3.dao.UserDao">
+	<!-- username은 기본키. 기본키는 자동으로 인덱스가 된다 -->
+	<select id="existsById" resultType="boolean">
+		select /*+ index_ffs(users users_pk_username) */ count(*) from users where username=#{username} and rownum=1
+	</select>
+	
+	<select id="existsByEmail" resultType="boolean">
+		select /*+ index_ffs(users users_idx_email) */ count(*) from users where email=#{email} and rownum=1
+	</select>
+	
+	<insert id="insert">
+		insert into users(username,password,email,irum,birthday,joinday,loginFailureCnt,writeCnt,levels,checkCode,enabled, profile) 
+		values(#{username},#{password},#{email},#{irum},#{birthday},sysdate,0,0,#{levels},#{checkCode},0, #{profile})
+	</insert>
+	
+	<select id="findByCheckCode" resultType="user">
+		select * from users where checkCode=#{checkCode} and rownum=1
+	</select>
+	
+	<select id="findByEmail" resultType="user">
+		select * from users where email=#{email} and rownum=1
+	</select>
+	
+	<select id="findById" resultType="user">
+		select * from users where username=#{username} and rownum=1
+	</select>
+	
+	<delete id="deleteByCheckCodeIsNotNul">
+		delete from users where checkCode is not null
+	</delete>
+	
+	<delete id="delete">
+		delete from users where username=#{username} and rownum=1
+	</delete>
+	
+	<update id="update">
+		update users
+		<trim suffixOverrides="," prefix="set">
+			<if test="password!=null"> password=#{password}, </if>
+			<if test="email!=null"> email=#{email}, </if>
+			<if test="irum!=null"> irum=#{irum}, </if>
+			<if test="loginFailureCnt!=null"> loginFailureCnt=#{loginFailureCnt}, </if>
+			<if test="writeCnt!=null"> writeCnt=#{writeCnt}, </if>
+			<if test="levels!=null"> levels=#{levels}, </if>
+			<if test="enabled!=null"> enabled=#{enabled}</if>
+		</trim>
+		where username=#{username} and rownum=1
+	</update>
+	
+	<update id="joinCheck">
+		update users set checkCode=null, enabled=1 where username=#{username} and rownum=1
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.3.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<!--  HTTP를 위한 자동 설정 활성화 -->
+	<sec:http>
+		<sec:csrf disabled="true"/>
+		<sec:form-login
+			username-parameter="username"
+			password-parameter="password"
+			login-page="/user/login"
+			login-processing-url="/user/login"
+			authentication-failure-handler-ref="loginFailureHandler"
+			authentication-success-handler-ref="loginSuccessHandler"
+		/>
+		<sec:logout logout-url="/user/logout" logout-success-url="/" /> 
+		<sec:access-denied-handler error-page="/system/403" />
+	</sec:http>
+	
+	<sec:authentication-manager>
+		<sec:authentication-provider user-service-ref="customUserDetailsService">
+			<sec:password-encoder ref="passwordEncoder" />
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+</beans>
